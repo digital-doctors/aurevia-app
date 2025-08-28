@@ -6,30 +6,43 @@
 <title>Aurevia Tutor Bot</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <style>
-  /* Force full screen on mobile, prevent keyboard resize */
+  /* Force full screen on mobile and prevent zoom/scroll */
   html, body {
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: hidden;      /* Prevent page scroll */
     margin: 0;
     padding: 0;
-    touch-action: none;
+    touch-action: none;    /* Disable touch scrolling */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -ms-user-select: none;
   }
+
   .chat-wrapper {
     display: flex;
     flex-direction: column;
     width: 100vw;
     height: 100vh;
   }
+
   /* Ensure chat input stays visible when keyboard opens */
+  .chat-window {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+
+  .chat-input-bar {
+    flex-shrink: 0; /* Keep input bar pinned at bottom */
+  }
+
+  /* Optional: prevent pinch zoom */
   @media screen and (max-width: 600px) {
-    .chat-window {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-    }
-    .chat-input-bar {
-      flex-shrink: 0;
+    body {
+      touch-action: pan-x pan-y pinch-zoom;
     }
   }
 </style>
@@ -75,9 +88,12 @@
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
   // Prevent viewport resize when mobile keyboard opens
-  window.addEventListener('resize', () => {
+  function adjustHeight() {
     document.body.style.height = window.innerHeight + 'px';
-  });
+  }
+  window.addEventListener('resize', adjustHeight);
+  window.addEventListener('orientationchange', adjustHeight);
+  adjustHeight();
 </script>
 </body>
 </html>
