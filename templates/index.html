@@ -2,20 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Aurevia Tutor Bot</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+  /* Force full screen on mobile, prevent keyboard resize */
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    touch-action: none;
+  }
+  .chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+  }
+  /* Ensure chat input stays visible when keyboard opens */
+  @media screen and (max-width: 600px) {
+    .chat-window {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+    .chat-input-bar {
+      flex-shrink: 0;
+    }
+  }
+</style>
 </head>
 <body>
 <div class="chat-wrapper">
 
     <!-- Header -->
     <header class="chat-header">
-        <h1>Aurevia </h1>
+        <h1>Aurevia</h1>
         <p>Illuminate your learning.</p>
         <button id="clearChat" class="clear-btn">Clear All</button>
     </header>
-
 
     <!-- Chat window -->
     <div id="chat" class="chat-window">
@@ -46,5 +73,11 @@
 
 <!-- Script -->
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+  // Prevent viewport resize when mobile keyboard opens
+  window.addEventListener('resize', () => {
+    document.body.style.height = window.innerHeight + 'px';
+  });
+</script>
 </body>
 </html>
