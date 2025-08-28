@@ -1,13 +1,18 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import os, re, ast, operator as op
 import cohere
 from datetime import datetime
 
 app = Flask(__name__)
+# ---------------- Hardcoded secret key ----------------
+app.secret_key = "f3a1b2c4d5e6f7890123456789abcdef0123456789abcdef"
 
 # ---------------- Cohere setup ----------------
 COHERE_KEY = "OC7WvIc3z7pwMRiQL3VpcRTmsqcHG1oAVgL7jPOA"
 co = cohere.Client(COHERE_KEY) if COHERE_KEY else None
+
+# ---------------- In-memory chat memory ----------------
+chat_memory = {}  # {session_id: [{"role":"user","msg":"..."},{"role":"bot","msg":"..."}]}
 
 # ------------- Safe math evaluator -------------
 _ALLOWED_OPS = {ast.Add: op.add, ast.Sub: op.sub, ast.Mult: op.mul,
@@ -47,6 +52,9 @@ def generate_quiz(subj, diff):
 # ------------- Flask routes -------------
 @app.route("/")
 def index():
+    # Ensure session ID exists
+    if "id" not in session:
+        session["id"] = os.urandom(16).hex()
     return render_template("index.html")
 
 @app.route("/ask", methods=["POST"])
@@ -57,17 +65,39 @@ def ask():
     diff = data.get("difficulty","Medium")
     timestamp = datetime.now().strftime("%H:%M")
 
+    # Get session ID
+    session_id = session.get("id")
+    if not session_id:
+        session["id"] = os.urandom(16).hex()
+        session_id = session["id"]
+
+    # Initialize memory for this session
+    if session_id not in chat_memory:
+        chat_memory[session_id] = []
+
+    # Append user message
+    chat_memory[session_id].append({"role":"user","msg":q})
+
+    # Build conversation history
+    history_text = ""
+    for m in chat_memory[session_id]:
+        history_text += f"{m['role']}: {m['msg']}\n"
+
+    # Generate AI reply
     if co:
         try:
             response = co.chat(
                 model="command-r-plus",
-                message=f"You are a formal, professional tutor. Subject: {subj}, Difficulty: {diff}. User asked: {q}. Respond clearly, with full sentences, no markdown or asterisks."
+                message=f"You are a formal, professional tutor. Subject: {subj}, Difficulty: {diff}.\nConversation so far:\n{history_text}\nRespond clearly, with full sentences, no markdown or asterisks."
             )
             reply = response.text.strip()
         except Exception as e:
             reply = fallback_tutor(q, subj, diff) + f" (Error: {e})"
     else:
         reply = fallback_tutor(q, subj, diff)
+
+    # Append bot reply
+    chat_memory[session_id].append({"role":"bot","msg":reply})
 
     return jsonify({"reply": reply, "time": timestamp})
 
@@ -78,3 +108,4 @@ def quiz():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
