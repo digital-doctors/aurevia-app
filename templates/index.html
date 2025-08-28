@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurevia Tutor Bot</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="chat-wrapper">
+
+    <!-- Header -->
+    <header class="chat-header">
+        <h1>Aurevia </h1>
+        <p>Illuminate your learning.</p>
+        <button id="clearChat" class="clear-btn">Clear All</button>
+    </header>
+
+
+    <!-- Chat window -->
+    <div id="chat" class="chat-window">
+        <!-- Messages will be dynamically added here -->
+    </div>
+
+    <!-- Input bar -->
+    <div class="chat-input-bar">
+        <div class="input-row">
+            <select id="subject" class="input-select">
+                <option>Math</option>
+                <option>Physics</option>
+                <option>Chemistry</option>
+                <option>English</option>
+                <option>Other</option>
+            </select>
+            <select id="difficulty" class="input-select">
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+            </select>
+        </div>
+        <textarea id="question" class="input-text" placeholder="Type your question..."></textarea>
+        <button id="sendBtn" class="send-btn">Send</button>
+    </div>
+
+</div>
+
+<!-- Script -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
