@@ -5,24 +5,30 @@
     box-sizing: border-box;
     font-family: 'Inter', sans-serif;
 }
-body {
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;           /* Prevent scrolling */
+    touch-action: none;         /* Prevent touch scrolling */
+    -webkit-user-select: none;  /* Disable text selection */
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none; /* Disable long-press menu on iOS */
     background-color: #202123;
     color: #d7dadc;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
 }
 
 /* Chat wrapper */
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 720px;
-    height: 90vh;
+    width: 100vw;      /* Full width */
+    height: 100vh;     /* Full height */
     background-color: #343541;
-    border-radius: 12px;
+    border-radius: 0;  /* No rounding for app feel */
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
@@ -32,6 +38,7 @@ body {
     padding: 20px;
     background-color: #444654;
     text-align: center;
+    position: relative; /* for clear button */
 }
 .chat-header h1 {
     font-size: 22px;
@@ -43,6 +50,24 @@ body {
     margin-top: 4px;
 }
 
+/* Clear button */
+.clear-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: #ff4d4f;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+.clear-btn:hover {
+    background: #d9363e;
+}
+
 /* Chat window */
 .chat-window {
     flex: 1;
@@ -51,6 +76,7 @@ body {
     flex-direction: column;
     gap: 12px;
     overflow-y: auto;
+    overscroll-behavior: contain; /* prevent scroll chaining on mobile */
 }
 
 /* Scrollbar */
@@ -102,27 +128,6 @@ body {
     margin-top: 4px;
     text-align: right;
 }
-
-.clear-btn {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    background: #ff4d4f;
-    color: #fff;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 600;
-}
-.clear-btn:hover {
-    background: #d9363e;
-}
-.chat-header {
-    position: relative; /* so Clear button positions correctly */
-}
-
 
 /* Input bar */
 .chat-input-bar {
